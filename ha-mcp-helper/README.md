@@ -1,10 +1,10 @@
-# Home Assistant AI Helper Add-on
+# Home Assistant AI Helper App
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python](https://img.shields.io/badge/Python-3.11+-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 
-A lightweight, paranoid-secure Home Assistant companion add-on enabling autonomous AI agents (such as Antigravity, Claude Code, Gemini CLI, OpenCode, and Cursor) to safely read, modify, snapshot, and validate configurations and automations.
+A lightweight, paranoid-secure Home Assistant companion app enabling autonomous AI agents (such as Antigravity, Claude Code, Gemini CLI, OpenCode, and Cursor) to safely read, modify, snapshot, and validate configurations and automations.
 
 ---
 
@@ -19,7 +19,7 @@ A lightweight, paranoid-secure Home Assistant companion add-on enabling autonomo
 
 ## Configuration
 
-In Home Assistant, navigate to **Settings** -> **Add-ons** -> **Home Assistant AI Helper** -> **Configuration**:
+In Home Assistant, navigate to **Settings** -> **Apps** -> **Home Assistant AI Helper** -> **Configuration**:
 
 ```yaml
 api_key: "your-strong-random-secret-key"
@@ -35,7 +35,7 @@ api_key: "your-strong-random-secret-key"
 
 All endpoints require authentication via `X-Addon-API-Key` header:
 
-- `GET /api/v1/health`: Add-on status, version, and memory usage.
+- `GET /api/v1/health`: App status, version, and memory usage.
 - `POST /api/v1/file/read`: Safe read of configuration files in `/config`.
 - `POST /api/v1/file/write`: Safe atomic write with YAML syntax validation and pre-edit snapshot.
 - `GET /api/v1/backup/list`: List existing snapshot backups in `/config/.snapshots/`.

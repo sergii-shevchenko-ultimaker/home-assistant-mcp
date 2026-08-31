@@ -36,7 +36,7 @@ jobs:
         run: npm run --prefix mcp-server build
 
   test-addon:
-    name: HA Add-on Unit Tests
+    name: HA App Unit Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code

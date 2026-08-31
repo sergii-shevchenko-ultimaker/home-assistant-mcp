@@ -1,13 +1,13 @@
-# Home Assistant AI Helper Add-on
+# Home Assistant AI Helper App
 
 Lightweight and secure AI agent companion for Home Assistant.
 
 ## How to Configure
 
-1. Navigate to the **Configuration** tab in this add-on.
+1. Navigate to the **Configuration** tab in this app.
 2. In the **api_key** field, enter a secure random secret key (e.g., a 32+ character alphanumeric string).
-3. Click **Save** and **Start** the add-on.
-4. Provide this API key and the add-on URL (`http://<your-ha-ip>:8099`) to your MCP client configuration (`ADDON_KEY` and `ADDON_URL`).
+3. Click **Save** and **Start** the app.
+4. Provide this API key and the app URL (`http://<your-ha-ip>:8099`) to your MCP client configuration (`ADDON_KEY` and `ADDON_URL`).
 
 ## Security Features
 

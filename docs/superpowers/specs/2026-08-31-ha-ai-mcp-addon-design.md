@@ -64,7 +64,7 @@ The `ha-ai` platform enables an autonomous AI agent to safely inspect, configure
 
 ### Component 1: Lightweight HA Addon (`addon/`)
 
-Built as a Home Assistant OS Add-on utilizing an Alpine Linux Python base image.
+Built as a Home Assistant OS App utilizing an Alpine Linux Python base image.
 
 #### Key Security Guards
 * **Constant-Time Auth:** Request header `X-Addon-API-Key` compared using `hmac.compare_digest`.

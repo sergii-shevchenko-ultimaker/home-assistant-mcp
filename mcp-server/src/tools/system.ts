@@ -25,7 +25,7 @@ export const getLogsSchema = {
     .enum(["core", "supervisor", "all"])
     .optional()
     .default("all")
-    .describe("Log source to query ('core' for HA Core events, 'supervisor' for Docker/Add-on lifecycle, 'all' for combined)"),
+    .describe("Log source to query ('core' for HA Core events, 'supervisor' for Docker/App lifecycle, 'all' for combined)"),
 };
 
 export const createBackupSchema = {

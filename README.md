@@ -7,7 +7,7 @@
 [![Playwright](https://img.shields.io/badge/Playwright-1.50+-2EAD33.svg?logo=playwright&logoColor=white)](https://playwright.dev/)
 [![My Home Assistant Add Repository](https://img.shields.io/badge/Home%20Assistant-Add%20Repository-41BDF5.svg?logo=homeassistant&logoColor=white)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fsserhii-tech%2Fhome-assistant-mcp)
 
-> **Lightweight, paranoid-secure Home Assistant MCP Server and OS Add-on with client-side Playwright visual feedback for autonomous AI agents.**
+> **Lightweight, paranoid-secure Home Assistant MCP Server and OS App with client-side Playwright visual feedback for autonomous AI agents.**
 
 ---
 
@@ -19,7 +19,7 @@ The `ha-ai` platform enables autonomous AI coding agents (such as Antigravity, G
 - 👁️ **Visual Dashboard Iteration**: Render Lovelace dashboards headlessly via client-side Playwright, capture full or card-level screenshots across desktop, tablet, and mobile viewports, and visually iterate until UI design is perfected.
 - ⚡ **Full Lifecycle Automation & Script Authoring**: Safely read, write, validate, and trigger automations and scripts with automatic syntax checks and zero-downtime service reloads.
 - 🛡️ **Paranoid Security**: Strict path jailing within `/config`, constant-time API key verification, automatic secret redaction, and zero unauthorized command execution.
-- 🪶 **Minimal Server Footprint**: Lightweight Python FastAPI container running as a Home Assistant OS Add-on (< 35MB RAM, ~0% idle CPU) with zero heavy browser or ML dependencies on the HA host.
+- 🪶 **Minimal Server Footprint**: Lightweight Python FastAPI container running as a Home Assistant OS App (< 35MB RAM, ~0% idle CPU) with zero heavy browser or ML dependencies on the HA host.
 - 🔄 **Atomic Snapshots & One-Click Rollback**: Automatic pre-edit snapshots created before every file modification, with instant atomic rollback capabilities.
 
 ---
@@ -39,7 +39,7 @@ flowchart TD
 
     subgraph HAHost["Remote Home Assistant OS Instance"]
         HACore["Home Assistant Core<br/>(REST & WebSocket APIs)"]
-        Addon["AI Helper Add-on<br/>(FastAPI / Alpine Container)"]
+        Addon["AI Helper App<br/>(FastAPI / Alpine Container)"]
         Storage["HA Filesystem (/config)<br/>- automations.yaml<br/>- ui-lovelace.yaml<br/>- .snapshots/<br/>- home-assistant.log"]
         
         Addon -->|"Mounts rw"| Storage
@@ -57,7 +57,7 @@ flowchart TD
 | Security Guard | Implementation | Protection |
 | :--- | :--- | :--- |
 | **Path Traversal Jail** | `os.path.realpath` canonicalization inside `/config` | Prevents access to `/etc/shadow`, root system files, or container host escape (`403 Forbidden`). |
-| **Constant-Time Auth** | `hmac.compare_digest` for `X-Addon-API-Key` | Eliminates timing-attack vulnerabilities against add-on API authentication. |
+| **Constant-Time Auth** | `hmac.compare_digest` for `X-Addon-API-Key` | Eliminates timing-attack vulnerabilities against app API authentication. |
 | **Deny-List Protection** | File path blocking on `secrets.yaml`, `.storage/core.auth`, `*.pem`, SSH keys | Protects sensitive user credentials and tokens from being read or overwritten. |
 | **Secret Redaction** | Regex redaction filters on log streaming | Automatically sanitizes passwords, long-lived tokens, and API keys from tail logs. |
 | **Atomic Pre-Edit Snapshots** | Automated `.snapshots/` creation before writes | Guarantees safe rollback to the exact prior disk state upon syntax or runtime errors. |
@@ -68,7 +68,7 @@ flowchart TD
 
 ### 1. Prerequisites
 - **Node.js 20+** and **npm** installed locally.
-- **Python 3.11+** with `uv` (for running add-on tests locally).
+- **Python 3.11+** with `uv` (for running app tests locally).
 - Running **Home Assistant OS** instance.
 
 ### 2. Installation & Build
@@ -88,7 +88,7 @@ npm run build
 ### 3. Developer Workflows & Commands
 
 ```bash
-# Local Development: Start Add-on daemon with hot-reloading on :8099
+# Local Development: Start App daemon with hot-reloading on :8099
 npm run dev:addon
 
 # Local Development: Start MCP server in TypeScript watch mode
@@ -128,7 +128,7 @@ The server exposes 12 specialized tools under the Model Context Protocol:
 ### 🛠️ System, Diagnostics & Safety Tools
 | Tool Name | Parameters | Description |
 | :--- | :--- | :--- |
-| `ha_system_health` | *(none)* | Check health and connectivity of both Home Assistant Core and the Add-on daemon. |
+| `ha_system_health` | *(none)* | Check health and connectivity of both Home Assistant Core and the App daemon. |
 | `ha_system_list_entities` | `domain_filter?`, `search_query?` | Search and filter entities by domain (e.g. `light`, `sensor`, `climate`) with full attributes. |
 | `ha_system_call_service` | `domain`, `service`, `service_data?` | Invoke any Home Assistant domain service (e.g. `light.turn_on`, `switch.toggle`, `climate.set_temperature`). |
 | `ha_system_get_logs` | `lines_count?` (default: 100) | Retrieve the last $N$ lines of Home Assistant core logs with automatic secret redaction. |
@@ -150,7 +150,7 @@ This repository includes 4 production-ready AI agent skills:
 
 ## Documentation
 
-For full installation instructions, add-on configuration, agent integration guides (Antigravity, Gemini CLI, Claude Desktop, OpenCode, Cursor), and network architecture details, see:
+For full installation instructions, app configuration, agent integration guides (Antigravity, Gemini CLI, Claude Desktop, OpenCode, Cursor), and network architecture details, see:
 
 📖 **[Full Installation & Setup Guide](docs/setup-guide.md)**
 

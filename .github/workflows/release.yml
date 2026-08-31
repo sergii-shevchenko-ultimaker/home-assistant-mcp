@@ -51,7 +51,7 @@ jobs:
           npm run --prefix mcp-server lint
           npm run --prefix mcp-server test
 
-      - name: Run Add-on Tests
+      - name: Run App Tests
         run: uv run --directory ha-mcp-helper --extra dev pytest tests
 
       - name: Validate CHANGELOG.md Exists for Release Version
@@ -75,7 +75,7 @@ jobs:
           '
 
   publish-addon-containers:
-    name: Build & Publish Add-on (${{ matrix.arch }})
+    name: Build & Publish App (${{ matrix.arch }})
     needs: [test-and-verify]
     runs-on: ubuntu-latest
     strategy:
@@ -113,9 +113,9 @@ jobs:
           OWNER_LOWER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
           echo "version=${CLEAN_VERSION}" >> "$GITHUB_OUTPUT"
           echo "owner=${OWNER_LOWER}" >> "$GITHUB_OUTPUT"
-          echo "Resolved Add-on Version: ${CLEAN_VERSION} for owner: ${OWNER_LOWER}"
+          echo "Resolved App Version: ${CLEAN_VERSION} for owner: ${OWNER_LOWER}"
 
-      - name: Build and Push Add-on Container Image
+      - name: Build and Push App Container Image
         uses: docker/build-push-action@v6
         with:
           context: ha-mcp-helper

@@ -1,6 +1,6 @@
 # Home Assistant AI Helper - Installation & Configuration Guide
 
-This guide walks you through setting up the **Home Assistant AI Helper** add-on on your Home Assistant OS instance and configuring your local AI agent development environments (Antigravity, Gemini CLI, Claude Desktop, Claude Code, OpenCode, and Cursor).
+This guide walks you through setting up the **Home Assistant AI Helper** app on your Home Assistant OS instance and configuring your local AI agent development environments (Antigravity, Gemini CLI, Claude Desktop, Claude Code, OpenCode, and Cursor).
 
 ---
 
@@ -13,19 +13,19 @@ Before getting started, make sure you have:
 
 ---
 
-## 2. Home Assistant OS Add-on Setup
+## 2. Home Assistant OS App Setup
 
-The custom add-on provides the lightweight, paranoid-secure REST companion daemon (< 35MB RAM, ~0% idle CPU) running directly inside HAOS.
+The custom app provides the lightweight, paranoid-secure REST companion daemon (< 35MB RAM, ~0% idle CPU) running directly inside HAOS.
 
-### Step 2.1: Add Add-on Repository to Home Assistant
+### Step 2.1: Add App Repository to Home Assistant
 
-#### Method A: Via Add-on Store Repository (Recommended)
+#### Method A: Via App Store Repository (Recommended)
 1. Open your Home Assistant Web UI.
-2. Navigate to **Settings** -> **Add-ons** -> **Add-on Store**.
+2. Navigate to **Settings** -> **Apps** -> **Install App**.
 3. Click the three dots (top-right menu) and select **Repositories**.
 4. Add your GitHub repository URL: `https://github.com/sserhii-tech/home-assistant-mcp`.
 5. Click **Add** and then close the dialog.
-6. Click **Check for updates**; **Home Assistant AI Helper** will appear in the Add-on Store under your custom repository.
+6. Click **Check for updates**; **Home Assistant AI Helper** will appear in the App Store under your custom repository.
 
 #### Method B: Manual Copy via Samba or SSH
 1. Connect to your Home Assistant instance via Samba Share or SSH/SCP.
@@ -56,12 +56,12 @@ The custom add-on provides the lightweight, paranoid-secure REST companion daemo
        └── main.py
    ```
 
-### Step 2.2: Install and Start the Add-on
+### Step 2.2: Install and Start the App
 
 1. Open your Home Assistant Web UI.
-2. Navigate to **Settings** -> **Add-ons** -> **Add-on Store**.
+2. Navigate to **Settings** -> **Apps** -> **Install app**.
 3. Click the three dots (top-right menu) and select **Check for updates** / **Reload**.
-4. Scroll down to the **Local Add-ons** section and click on **Home Assistant AI Helper**.
+4. Scroll down to the **** section **Home Assistant AI Repository** and click on **Home Assistant AI Helper**.
 5. Click **Install**.
 6. After installation completes, switch to the **Configuration** tab:
    - Set `api_key` to a strong random secret token (e.g., `ha_ai_sec_9f83b271a94e8c105e6b12`).
@@ -218,7 +218,7 @@ To equip your AI agent with specialized domain knowledge for Home Assistant, cop
 
 Test the setup from your command line:
 
-### Test 1: Verify Add-on Health
+### Test 1: Verify App Health
 ```bash
 curl -X GET http://192.168.1.100:8099/api/v1/health \
   -H "X-Addon-API-Key: your-addon-api-key"
@@ -251,6 +251,6 @@ curl -X GET http://192.168.1.100:8123/api/ \
 # Run TypeScript MCP test suite (including E2E smoke tests)
 npm --prefix mcp-server test
 
-# Run Python Add-on security test suite
+# Run Python App security test suite
 uv run --directory apps/ha-mcp-helper pytest tests/
 ```

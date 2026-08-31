@@ -12,7 +12,7 @@ fi
 
 if [ -z "$ADDON_API_KEY" ]; then
     echo "[WARNING] No ADDON_API_KEY configured in /data/options.json or environment!"
-    echo "[WARNING] Please configure an api_key in the add-on configuration."
+    echo "[WARNING] Please configure an api_key in the app configuration."
 fi
 
 if [ -d "/homeassistant" ]; then
