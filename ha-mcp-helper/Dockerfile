@@ -1,4 +1,4 @@
-ARG BUILD_FROM=ghcr.io/home-assistant/amd64-base-python:3.11-alpine
+ARG BUILD_FROM=python:3.11-alpine
 FROM ${BUILD_FROM}
 
 # Set environment
