@@ -1,5 +1,11 @@
 # Changelog
-
+## 0.3.2
+- 🔍 Add support to read supervisor logs
+## 0.3.1
+- 🧹 More build dependency updates
+## 0.3.0
+- 🧹 Update node version in Github Actions to 24
+- 👷 Update the build system to use modern HA build actions 
 ## 0.2.1
 - ✨ Added `ha_system_call_service` tool for direct service invocations.
 - 🎮 Added `ha-device-controller` AI agent skill for entity control and state verification.
