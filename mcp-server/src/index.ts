@@ -48,10 +48,29 @@ export function createServer(providedClients?: ToolClients): {
   return { server, clients };
 }
 
-// Backward-compatible alias
-export const createMcpServer = createServer;
+import { syncSkills } from "./cli/skills.js";
+
+export { syncSkills };
 
 async function main(): Promise<void> {
+  const args = process.argv.slice(2);
+  if (args.includes("install-skills") || args.includes("update-skills") || args.includes("sync-skills")) {
+    const customDir = args.find((a) => a.startsWith("--dir="))?.split("=")[1];
+    console.log("🚀 Synchronizing Home Assistant AI Skills...");
+    const result = syncSkills(customDir, false);
+    console.log(`✨ Successfully synchronized ${result.installedCount} skill files across ${result.targetDirs.length} directories.`);
+    process.exit(0);
+  }
+
+  // Background auto-sync skills if enabled or if standard skills folder exists
+  if (process.env.AUTO_SYNC_SKILLS !== "false") {
+    try {
+      syncSkills(undefined, true);
+    } catch {
+      // Non-blocking auto-sync
+    }
+  }
+
   const { server, clients } = createServer();
   const transport = new StdioServerTransport();
 
