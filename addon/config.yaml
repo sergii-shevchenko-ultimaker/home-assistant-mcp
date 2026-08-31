@@ -1,0 +1,21 @@
+name: "Home Assistant AI Helper"
+slug: "ha_ai_helper"
+description: "Lightweight and secure AI agent companion for Home Assistant"
+version: "1.0.0"
+arch:
+  - "armhf"
+  - "armv7"
+  - "aarch64"
+  - "amd64"
+  - "i386"
+init: false
+map:
+  - "config:rw"
+ports:
+  8099/tcp: 8099
+ports_description:
+  8099/tcp: "AI Helper REST API"
+options:
+  api_key: ""
+schema:
+  api_key: "str"
