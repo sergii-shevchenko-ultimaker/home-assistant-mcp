@@ -2,5 +2,6 @@
   "name": "Home Assistant AI Helper",
   "homeassistant": "2024.1.0",
   "hacs": "1.33.0",
-  "render_readme": true
+  "render_readme": true,
+  "hide_default_branch": true
 }
