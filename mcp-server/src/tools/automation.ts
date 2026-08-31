@@ -1,12 +1,12 @@
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { ToolClients, McpToolResult } from "./types.js";
 
 export const listAutomationsSchema = {
   domain: z
     .enum(["automation", "script", "scene"])
     .optional()
-    .describe("Filter by domain ('automation', 'script', 'scene'). Defaults to 'automation'."),
+    .describe("Domain to list (defaults to 'automation')"),
 };
 
 export const readAutomationSchema = {
@@ -34,14 +34,10 @@ export const triggerAutomationSchema = {
     .describe("Automation entity_id to trigger (e.g. 'automation.evening_lights')"),
 };
 
-/**
- * Split automations.yaml content into separate top-level YAML blocks.
- */
 function splitYamlBlocks(yamlContent: string): string[] {
   if (!yamlContent.trim()) {
     return [];
   }
-  // Split on lines starting with "- " at indentation 0
   const lines = yamlContent.split("\n");
   const blocks: string[] = [];
   let currentBlock: string[] = [];
@@ -65,17 +61,14 @@ function splitYamlBlocks(yamlContent: string): string[] {
   return blocks;
 }
 
-/**
- * Check if a YAML block matches a given automation ID or alias.
- */
+function escapeRegex(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 function blockMatchesIdOrAlias(block: string, targetId: string): boolean {
   const idRegex = new RegExp(`(^|\\n)\\s*-\\s*id:\\s*['"]?${escapeRegex(targetId)}['"]?(\\s|$)|(^|\\n)\\s*id:\\s*['"]?${escapeRegex(targetId)}['"]?(\\s|$)`, "i");
   const aliasRegex = new RegExp(`(^|\\n)\\s*alias:\\s*['"]?${escapeRegex(targetId)}['"]?(\\s|$)`, "i");
   return idRegex.test(block) || aliasRegex.test(block);
-}
-
-function escapeRegex(str: string): string {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 export async function handleAutomationList(
@@ -181,7 +174,6 @@ export async function handleAutomationWrite(
     let formattedNewBlock = args.yaml_code.trim();
 
     if (!formattedNewBlock.startsWith("- ")) {
-      // Ensure leading list dash for top-level item
       const lines = formattedNewBlock.split("\n");
       const firstLine = `- ${lines[0]}`;
       const restLines = lines.slice(1).map((l) => (l.trim() ? `  ${l}` : l));
@@ -204,7 +196,6 @@ export async function handleAutomationWrite(
       label,
     });
 
-    // Reload automations in Home Assistant
     try {
       await clients.restClient.callService("automation", "reload");
     } catch (reloadErr: any) {

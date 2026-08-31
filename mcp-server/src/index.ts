@@ -1,47 +1,42 @@
 #!/usr/bin/env node
+
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
-import { loadConfig } from "./config.js";
-import { HARestClient } from "./clients/ha-rest.js";
-import { HAWsClient } from "./clients/ha-ws.js";
-import { AddonClient } from "./clients/addon-client.js";
-import { DashboardRenderer } from "./browser/renderer.js";
-
+import { loadConfig } from "./core/config.js";
+import { defaultLogger } from "./core/logger.js";
+import { HARestAdapter } from "./adapters/ha/ha-rest.adapter.js";
+import { HAWsAdapter } from "./adapters/ha/ha-ws.adapter.js";
+import { AddonAdapter } from "./adapters/addon/addon.adapter.js";
+import { PlaywrightDashboardAdapter } from "./adapters/browser/playwright.adapter.js";
 import { registerDashboardTools } from "./tools/dashboard.js";
 import { registerAutomationTools } from "./tools/automation.js";
 import { registerSystemTools } from "./tools/system.js";
 import type { ToolClients } from "./tools/types.js";
 
-export function createServer(customClients?: ToolClients): {
+export function createClients(): ToolClients {
+  const config = loadConfig();
+  const restClient = new HARestAdapter({ haUrl: config.haUrl, haToken: config.haToken });
+  const wsClient = new HAWsAdapter({ haUrl: config.haUrl, haToken: config.haToken });
+  const addonClient = new AddonAdapter({ addonUrl: config.addonUrl, addonKey: config.addonKey });
+  const renderer = new PlaywrightDashboardAdapter({
+    haUrl: config.haUrl,
+    haToken: config.haToken,
+    browserStateDir: config.browserStateDir,
+  });
+
+  return { restClient, wsClient, addonClient, renderer };
+}
+
+export function createServer(providedClients?: ToolClients): {
   server: McpServer;
   clients: ToolClients;
 } {
-  const config = loadConfig();
-
-  const clients: ToolClients = customClients || {
-    restClient: new HARestClient({
-      haUrl: config.haUrl,
-      haToken: config.haToken,
-    }),
-    wsClient: new HAWsClient({
-      haUrl: config.haUrl,
-      haToken: config.haToken,
-    }),
-    addonClient: new AddonClient({
-      addonUrl: config.addonUrl,
-      addonKey: config.addonKey,
-    }),
-    renderer: new DashboardRenderer({
-      haUrl: config.haUrl,
-      haToken: config.haToken,
-      browserStateDir: config.browserStateDir,
-    }),
-  };
+  const clients = providedClients || createClients();
 
   const server = new McpServer({
     name: "ha-ai-mcp",
-    version: "0.1.0",
+    version: "1.0.0",
   });
 
   registerDashboardTools(server, clients);
@@ -51,47 +46,40 @@ export function createServer(customClients?: ToolClients): {
   return { server, clients };
 }
 
-export async function main(): Promise<void> {
+// Backward-compatible alias
+export const createMcpServer = createServer;
+
+async function main(): Promise<void> {
   const { server, clients } = createServer();
-
-  let isShuttingDown = false;
-  async function gracefulShutdown(signal: string) {
-    if (isShuttingDown) {
-      return;
-    }
-    isShuttingDown = true;
-    console.error(`[ha-ai-mcp] Received ${signal}, shutting down gracefully...`);
-
-    try {
-      await Promise.allSettled([
-        clients.renderer.close(),
-        clients.wsClient.disconnect(),
-        server.close(),
-      ]);
-    } catch (err: any) {
-      console.error(`[ha-ai-mcp] Error during shutdown: ${err.message}`);
-    } finally {
-      process.exit(0);
-    }
-  }
-
-  process.on("SIGINT", () => gracefulShutdown("SIGINT"));
-  process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
-
   const transport = new StdioServerTransport();
-  console.error("[ha-ai-mcp] Connecting Home Assistant MCP server via Stdio transport...");
-  await server.connect(transport);
-  console.error("[ha-ai-mcp] Home Assistant MCP server running on stdio.");
+
+  const cleanup = async () => {
+    defaultLogger.info("Shutting down Home Assistant AI MCP Server...");
+    try {
+      clients.wsClient.disconnect();
+      await clients.renderer.close();
+      await server.close();
+    } catch {
+      // Ignore teardown errors during exit
+    }
+    process.exit(0);
+  };
+
+  process.on("SIGINT", cleanup);
+  process.on("SIGTERM", cleanup);
+
+  try {
+    await server.connect(transport);
+    defaultLogger.info("Home Assistant AI MCP Server running on stdio.");
+  } catch (err: any) {
+    defaultLogger.error("Fatal MCP Server startup error:", err);
+    process.exit(1);
+  }
 }
 
-// Automatically run main if invoked directly from CLI
-const isDirectExecution =
-  process.argv[1] &&
-  (process.argv[1].endsWith("index.js") || process.argv[1].endsWith("index.ts"));
-
-if (isDirectExecution) {
+if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith("dist/index.js")) {
   main().catch((err) => {
-    console.error("[ha-ai-mcp] Fatal error starting server:", err);
+    defaultLogger.error("Unhandled top-level error:", err);
     process.exit(1);
   });
 }

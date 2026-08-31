@@ -1,14 +1,30 @@
-import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import type { HARestClient } from "../clients/ha-rest.js";
-import type { HAWsClient } from "../clients/ha-ws.js";
-import type { AddonClient } from "../clients/addon-client.js";
-import type { DashboardRenderer } from "../browser/renderer.js";
+import type { HARestAdapter } from "../adapters/ha/ha-rest.adapter.js";
+import type { HAWsAdapter } from "../adapters/ha/ha-ws.adapter.js";
+import type { AddonAdapter } from "../adapters/addon/addon.adapter.js";
+import type { PlaywrightDashboardAdapter } from "../adapters/browser/playwright.adapter.js";
 
 export interface ToolClients {
-  restClient: HARestClient;
-  wsClient: HAWsClient;
-  addonClient: AddonClient;
-  renderer: DashboardRenderer;
+  restClient: HARestAdapter;
+  wsClient: HAWsAdapter;
+  addonClient: AddonAdapter;
+  renderer: PlaywrightDashboardAdapter;
 }
 
-export type McpToolResult = CallToolResult;
+export interface McpToolTextContent {
+  type: "text";
+  text: string;
+}
+
+export interface McpToolImageContent {
+  type: "image";
+  data: string;
+  mimeType: string;
+}
+
+export type McpToolContent = McpToolTextContent | McpToolImageContent;
+
+export interface McpToolResult {
+  [x: string]: unknown;
+  content: McpToolContent[];
+  isError?: boolean;
+}

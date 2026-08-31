@@ -53,15 +53,13 @@ export async function handleDashboardGetConfig(
       if (clients.wsClient) {
         config = await clients.wsClient.getLovelaceConfig(slug);
       }
-    } catch (wsError) {
-      // If WebSocket fails or is not supported in storage mode, fallback to Addon file reading
+    } catch {
       const fallbackPath = slug && slug !== "lovelace" ? `dashboards/${slug}.yaml` : "ui-lovelace.yaml";
       const fileRes = await clients.addonClient.readFile(fallbackPath);
       config = fileRes.content;
     }
 
     if (config === undefined || config === null) {
-      // Try fallback file if config is still null
       const fallbackPath = slug && slug !== "lovelace" ? `dashboards/${slug}.yaml` : "ui-lovelace.yaml";
       const fileRes = await clients.addonClient.readFile(fallbackPath);
       config = fileRes.content;
@@ -98,13 +96,11 @@ export async function handleDashboardSaveConfig(
     const filePath = slug && slug !== "lovelace" ? `dashboards/${slug}.yaml` : "ui-lovelace.yaml";
     const label = args.label || `Dashboard update (${slug})`;
 
-    // Write file with AddonClient to ensure snapshot creation and YAML syntax validation
     const writeRes = await clients.addonClient.writeFile(filePath, args.config_yaml, {
       validateYaml: true,
       label,
     });
 
-    // If config is valid JSON, also update Lovelace via WebSocket API if connected
     try {
       const parsedJson = JSON.parse(args.config_yaml);
       if (typeof parsedJson === "object" && parsedJson !== null) {

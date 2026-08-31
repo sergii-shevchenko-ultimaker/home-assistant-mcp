@@ -50,11 +50,11 @@ export async function handleSystemHealth(clients: ToolClients): Promise<McpToolR
       timestamp: new Date().toISOString(),
       homeassistant: {
         api: isHaOk ? "ok" : "unreachable",
-        url: clients.restClient.haUrl,
-        details: isHaOk ? haApi.value : { error: (haApi as PromiseRejectedResult).reason?.message },
+        url: (clients.restClient as any).haUrl || (clients.restClient as any).client?.defaults?.baseURL,
+        details: isHaOk ? (haApi as PromiseFulfilledResult<any>).value : { error: (haApi as PromiseRejectedResult).reason?.message },
       },
       addon: isAddonOk
-        ? addonHealth.value
+        ? (addonHealth as PromiseFulfilledResult<any>).value
         : { status: "unreachable", error: (addonHealth as PromiseRejectedResult).reason?.message },
     };
 
@@ -173,7 +173,7 @@ export async function handleSystemCreateBackup(
       const file = await clients.addonClient.readFile("configuration.yaml");
       currentContent = file.content;
     } catch {
-      // If configuration.yaml not found, use default skeleton
+      // default skeleton
     }
 
     const writeRes = await clients.addonClient.writeFile("configuration.yaml", currentContent, {
