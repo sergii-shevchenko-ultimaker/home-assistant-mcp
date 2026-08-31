@@ -106,6 +106,26 @@ if (fs.existsSync(testApiPath)) {
   console.log('✓ Updated ha-mcp-helper/tests/test_api.py');
 }
 
+// 8. ha-mcp-helper/CHANGELOG.md
+const changelogPath = path.join(rootDir, 'ha-mcp-helper', 'CHANGELOG.md');
+if (fs.existsSync(changelogPath)) {
+  let changelog = fs.readFileSync(changelogPath, 'utf8');
+  if (!changelog.includes(`## ${newVersion}`)) {
+    let recentCommits = '';
+    try {
+      const gitLog = execSync('git log -n 5 --pretty=format:"- %s"', { cwd: rootDir, encoding: 'utf8' }).trim();
+      const filtered = gitLog.split('\n').filter(line => !line.includes('chore(release):')).slice(0, 3).join('\n');
+      recentCommits = filtered || '- 🚀 Routine maintenance and updates';
+    } catch {
+      recentCommits = '- 🚀 Maintenance and improvements';
+    }
+    const newEntry = `## ${newVersion}\n${recentCommits}\n\n`;
+    changelog = changelog.replace(/^# Changelog\r?\n\r?\n?/m, `# Changelog\n\n${newEntry}`);
+    fs.writeFileSync(changelogPath, changelog);
+    console.log('✓ Updated ha-mcp-helper/CHANGELOG.md');
+  }
+}
+
 console.log(`\n✨ Successfully bumped all manifests & code to v${newVersion}!`);
 
 // Optional Git commit & tag

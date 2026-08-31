@@ -1,4 +1,8 @@
 # Changelog
+
+## 0.3.3
+- 🚀 Fix container publishing to GHCR in Home Assistant build action (`push: true`).
+
 ## 0.3.2
 - 🔍 Add support to read supervisor logs
 ## 0.3.1
