@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.9
+- feat(cli): add install-skills CLI command and background auto-sync
+- Merge branch 'main' of github.com:sserhii-tech/home-assistant-mcp
+- chore: ignore .npmrc credential files
+
 ## 0.3.8
 - Rename add-on references to app across docs and CI
 - chore: update GitHub username to sserhii-tech across manifests, documentation, and remotes
