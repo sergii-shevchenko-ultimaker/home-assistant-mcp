@@ -17,6 +17,7 @@ on:
 permissions:
   contents: write
   packages: write
+  id-token: write
 
 jobs:
   test-and-verify:
@@ -154,16 +155,12 @@ jobs:
           npm ci
           npm run build
 
-      - name: Publish to NPM Registry
+      - name: Publish to NPM Registry (Trusted Publishing / OIDC)
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          if [ -n "${NODE_AUTH_TOKEN}" ]; then
-            echo "Publishing ha-ai-mcp-server to npm..."
-            npm --prefix mcp-server publish --access public || true
-          else
-            echo "No NPM_TOKEN provided; skipping npm publish."
-          fi
+          echo "Publishing ha-ai-mcp-server to npm registry..."
+          npm publish --workspace=mcp-server --access public --provenance || true
 
       - name: Package Standalone MCP Archive
         run: |

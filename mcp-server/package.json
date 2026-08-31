@@ -36,5 +36,14 @@
     "lovelace",
     "ai-agents"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sserhii-tech/home-assistant-mcp.git",
+    "directory": "mcp-server"
+  },
+  "homepage": "https://github.com/sserhii-tech/home-assistant-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/sserhii-tech/home-assistant-mcp/issues"
+  },
   "license": "Apache-2.0"
 }

@@ -1,7 +1,9 @@
 {
+  "repository": {
+    "url": "https://github.com/sserhii-tech/home-assistant-mcp"
+  },
   "name": "ha-ai",
   "version": "0.3.9",
-  "private": true,
   "type": "module",
   "description": "Lightweight, paranoid-secure Home Assistant AI MCP Server and Addon",
   "workspaces": [
@@ -15,6 +17,7 @@
     "test:addon": "uv run --directory ha-mcp-helper --extra dev pytest tests",
     "dev:addon": "uv run --directory ha-mcp-helper uvicorn app.main:app --host 0.0.0.0 --port 8099 --reload",
     "dev:mcp": "npm run --prefix mcp-server build -- --watch",
+    "publish:mcp": "npm run build && npm publish --workspace=mcp-server --access public",
     "version:bump": "node scripts/bump-version.js"
   },
   "keywords": [
@@ -32,6 +35,14 @@
     "visual-feedback",
     "playwright"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sserhii-tech/home-assistant-mcp.git"
+  },
+  "homepage": "https://github.com/sserhii-tech/home-assistant-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/sserhii-tech/home-assistant-mcp/issues"
+  },
   "author": "",
   "license": "Apache-2.0",
   "allowScripts": {

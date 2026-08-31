@@ -7,6 +7,7 @@
 [![Playwright](https://img.shields.io/badge/Playwright-1.50+-2EAD33.svg?logo=playwright&logoColor=white)](https://playwright.dev/)
 [![npm version](https://img.shields.io/npm/v/ha-ai-mcp-server.svg?logo=npm&logoColor=white)](https://www.npmjs.com/package/ha-ai-mcp-server)
 [![My Home Assistant Add Repository](https://img.shields.io/badge/Home%20Assistant-Add%20Repository-41BDF5.svg?logo=homeassistant&logoColor=white)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fsserhii-tech%2Fhome-assistant-mcp)
+[![Tests](https://github.com/sserhii-tech/home-assistant-mcp/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sserhii-tech/home-assistant-mcp/actions/workflows/ci.yml)
 
 > **Lightweight, paranoid-secure Home Assistant MCP Server and OS App with client-side Playwright visual feedback for autonomous AI agents.**
 
