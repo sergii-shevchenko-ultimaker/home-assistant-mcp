@@ -5,6 +5,7 @@
 [![Python](https://img.shields.io/badge/Python-3.11+-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Playwright](https://img.shields.io/badge/Playwright-1.50+-2EAD33.svg?logo=playwright&logoColor=white)](https://playwright.dev/)
+[![My Home Assistant Add Repository](https://img.shields.io/badge/Home%20Assistant-Add%20Repository-41BDF5.svg?logo=homeassistant&logoColor=white)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fsergii-shevchenko-ultimaker%2Fhome-assistant-mcp)
 
 > **Lightweight, paranoid-secure Home Assistant MCP Server and OS Add-on with client-side Playwright visual feedback for autonomous AI agents.**
 
@@ -129,6 +130,7 @@ The server exposes 12 specialized tools under the Model Context Protocol:
 | :--- | :--- | :--- |
 | `ha_system_health` | *(none)* | Check health and connectivity of both Home Assistant Core and the Add-on daemon. |
 | `ha_system_list_entities` | `domain_filter?`, `search_query?` | Search and filter entities by domain (e.g. `light`, `sensor`, `climate`) with full attributes. |
+| `ha_system_call_service` | `domain`, `service`, `service_data?` | Invoke any Home Assistant domain service (e.g. `light.turn_on`, `switch.toggle`, `climate.set_temperature`). |
 | `ha_system_get_logs` | `lines_count?` (default: 100) | Retrieve the last $N$ lines of Home Assistant core logs with automatic secret redaction. |
 | `ha_system_create_backup` | `label` | Create a named manual snapshot backup in `/config/.snapshots/`. |
 | `ha_system_restore_backup` | `snapshot_id` | Atomically restore a file from a snapshot ID with safety backup preservation. |
@@ -137,8 +139,9 @@ The server exposes 12 specialized tools under the Model Context Protocol:
 
 ## AI Skill Pack (`skills/`)
 
-This repository includes production-ready AI agent skills:
+This repository includes 4 production-ready AI agent skills:
 
+- 🎮 **[`ha-device-controller`](skills/ha-device-controller/SKILL.md)**: Standard Operating Procedure for querying entity states, executing domain service requests (lights, switches, climate, media), and verifying post-execution state transitions.
 - 🎨 **[`ha-dashboard-designer`](skills/ha-dashboard-designer/SKILL.md)**: Standard Operating Procedure for entity discovery, Lovelace card drafting, responsive layout verification, and iterative screenshot-based visual feedback loops.
 - 🔧 **[`ha-automation-builder`](skills/ha-automation-builder/SKILL.md)**: Standard Operating Procedure for drafting automations, validating trigger conditions, safe saving with automatic reloads, and log trace verification.
 - 🚨 **[`ha-troubleshooter`](skills/ha-troubleshooter/SKILL.md)**: Safety SOP for diagnosing integration errors, analyzing sanitized logs, and triggering immediate rollback restorations.

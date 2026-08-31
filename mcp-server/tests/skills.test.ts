@@ -114,6 +114,20 @@ describe("AI Skill Pack (`skills/`) Specification & Validation", () => {
         "Verify",
       ],
     },
+    {
+      dir: "ha-device-controller",
+      name: "ha-device-controller",
+      requiredTools: [
+        "ha_system_list_entities",
+        "ha_system_call_service",
+        "ha_system_get_logs",
+      ],
+      requiredStepKeywords: [
+        "Discover entity",
+        "Service call",
+        "Verify post-execution",
+      ],
+    },
   ];
 
   it("should have the skills directory present", () => {
