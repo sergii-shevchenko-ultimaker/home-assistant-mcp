@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.8
+- Rename add-on references to app across docs and CI
+- chore: update GitHub username to sserhii-tech across manifests, documentation, and remotes
+- Update maintainer email in repository metadata
+
 ## 0.3.7
 - Update maintainer email in repository metadata
 - Add emojis to 0.3.6 changelog entries
