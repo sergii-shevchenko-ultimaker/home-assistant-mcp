@@ -1,0 +1,64 @@
+name: Publish Release
+
+on:
+  release:
+    types:
+      - published
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Release Tag Name (e.g. v0.1.0)'
+        required: true
+        default: 'v0.1.0'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Install Monorepo Dependencies
+        run: npm ci
+
+      - name: Run MCP Server Test Suite
+        run: npm --prefix mcp-server test
+
+      - name: Run Add-on Test Suite
+        run: uv run --directory ha-mcp-helper --extra dev pytest tests
+
+      - name: Build MCP Server Distribution
+        run: npm run build
+
+      - name: Package Standalone MCP Archive
+        run: |
+          TAG="${{ github.event.release.tag_name || github.event.inputs.tag_name }}"
+          ARCHIVE_NAME="ha-ai-mcp-server-${TAG}.tar.gz"
+          tar -czf "${ARCHIVE_NAME}" -C mcp-server package.json dist
+
+      - name: Attach Archive to GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.event.release.tag_name || github.event.inputs.tag_name }}
+        run: |
+          ARCHIVE_NAME="ha-ai-mcp-server-${TAG}.tar.gz"
+          if [ -f "${ARCHIVE_NAME}" ]; then
+            gh release upload "${TAG}" "${ARCHIVE_NAME}" --clobber
+          fi
