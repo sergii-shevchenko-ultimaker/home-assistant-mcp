@@ -32,8 +32,8 @@ flowchart TD
         MCPServer["Local MCP Server<br/>(TypeScript / Stdio)"]
         Renderer["Playwright Browser Engine<br/>(Client-Side Headless)"]
         
-        Agent <-->|Model Context Protocol| MCPServer
-        MCPServer -->|Render Requests| Renderer
+        Agent <-->|"Model Context Protocol"| MCPServer
+        MCPServer -->|"Render Requests"| Renderer
     end
 
     subgraph HAHost["Remote Home Assistant OS Instance"]
@@ -41,12 +41,12 @@ flowchart TD
         Addon["AI Helper Add-on<br/>(FastAPI / Alpine Container)"]
         Storage["HA Filesystem (/config)<br/>- automations.yaml<br/>- ui-lovelace.yaml<br/>- .snapshots/<br/>- home-assistant.log"]
         
-        Addon -->|Mounts rw| Storage
+        Addon -->|"Mounts rw"| Storage
     end
 
-    MCPServer <-->|HTTPS / WSS :8123| HACore
-    MCPServer <-->|HTTP :8099 (X-Addon-API-Key)| Addon
-    Renderer -.->|HTTP/S (Render Web UI)| HACore
+    MCPServer <-->|"HTTPS / WSS :8123"| HACore
+    MCPServer <-->|"HTTP :8099 (X-Addon-API-Key)"| Addon
+    Renderer -.->|"HTTP/S (Render Web UI)"| HACore
 ```
 
 ---
