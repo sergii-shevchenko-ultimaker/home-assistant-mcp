@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.6
+- Update repo and image URLs to new GitHub owner
+- ci: strictly fail release and drafting workflows if CHANGELOG.md entry is missing
+- ci(draft): automatically extract and paste CHANGELOG.md notes into GitHub draft releases
+
 ## 0.3.5
 - fix(addon): set multi-arch python:3.11-alpine as default base image
 - ci(release): add QEMU multi-arch platform compilation (linux/arm64 & linux/amd64)
