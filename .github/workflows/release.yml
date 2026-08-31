@@ -90,18 +90,17 @@ jobs:
           arch: ${{ matrix.arch }}
           context: ha-mcp-helper
           image: ghcr.io/${{ steps.image_info.outputs.owner }}/ha-mcp-helper-${{ matrix.arch }}
+          version: ${{ steps.image_info.outputs.version }}
           image-tags: |
             ${{ steps.image_info.outputs.version }}
-            v${{ steps.image_info.outputs.version }}
             latest
+          push: "true"
           container-registry: ghcr.io
           container-registry-username: ${{ github.actor }}
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
-          cosign: false
+          cosign: "false"
           build-args: |
             BUILD_FROM=python:3.11-alpine
-            BUILD_ARCH=${{ matrix.arch }}
-            BUILD_VERSION=${{ steps.image_info.outputs.version }}
 
   publish-mcp-package:
     name: Build & Attach Standalone MCP Archive
