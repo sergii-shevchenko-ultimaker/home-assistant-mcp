@@ -19,7 +19,7 @@ RUN apk add --no-cache jq gcc musl-dev linux-headers python3-dev \
         psutil>=5.9.0
 
 # Copy application files
-COPY app /app/addon/app
+COPY app /app/app
 COPY run.sh /run.sh
 RUN chmod a+x /run.sh
 

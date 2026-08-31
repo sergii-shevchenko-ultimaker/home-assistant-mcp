@@ -20,4 +20,4 @@ echo "[INFO] Starting Home Assistant AI Helper Addon..."
 echo "[INFO] Config Root: ${CONFIG_ROOT}"
 echo "[INFO] Listening on port 8099..."
 
-exec uvicorn addon.app.main:app --host 0.0.0.0 --port 8099
+exec uvicorn app.main:app --host 0.0.0.0 --port 8099
