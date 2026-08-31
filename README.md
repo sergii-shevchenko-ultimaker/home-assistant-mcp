@@ -74,8 +74,8 @@ flowchart TD
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/ha-ai.git
-cd ha-ai
+git clone https://github.com/sergii-shevchenko-ultimaker/home-assistant-mcp.git
+cd home-assistant-mcp
 
 # Install root dependencies
 npm install
@@ -84,14 +84,23 @@ npm install
 npm run build
 ```
 
-### 3. Run Test Suites
+### 3. Developer Workflows & Commands
 
 ```bash
-# Run Vitest test suite (clients, tools, skills, renderer, and e2e smoke tests)
-npm --prefix mcp-server test
+# Local Development: Start Add-on daemon with hot-reloading on :8099
+npm run dev:addon
 
-# Run Python Addon test suite (security, snapshots, API endpoints)
-uv run --directory ha-mcp-helper pytest tests/
+# Local Development: Start MCP server in TypeScript watch mode
+npm run dev:mcp
+
+# Run full test suites (TypeScript Vitest & Python Pytest)
+npm test
+npm run test:addon
+
+# Synchronize versions across all manifests and code atomically
+npm run version:bump patch   # e.g. 0.1.0 -> 0.1.1
+npm run version:bump minor   # e.g. 0.1.0 -> 0.2.0
+npm run version:bump 1.0.0   # explicit version target
 ```
 
 ---
