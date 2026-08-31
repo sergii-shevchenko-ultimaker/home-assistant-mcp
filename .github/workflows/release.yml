@@ -54,6 +54,26 @@ jobs:
       - name: Run Add-on Tests
         run: uv run --directory ha-mcp-helper --extra dev pytest tests
 
+      - name: Validate CHANGELOG.md Exists for Release Version
+        run: |
+          node -e '
+          const fs = require("fs");
+          const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
+          const version = pkg.version.replace(/^v/, "");
+          const changelogPath = "ha-mcp-helper/CHANGELOG.md";
+          if (!fs.existsSync(changelogPath)) {
+            console.error("❌ ERROR: ha-mcp-helper/CHANGELOG.md is missing!");
+            process.exit(1);
+          }
+          const changelog = fs.readFileSync(changelogPath, "utf8");
+          const regex = new RegExp(`^##\\s+v?${version.replace(/\\./g, "\\.")}`, "m");
+          if (!regex.test(changelog)) {
+            console.error(`❌ ERROR: Missing changelog entry for version ${version} in ha-mcp-helper/CHANGELOG.md!`);
+            process.exit(1);
+          }
+          console.log(`✓ Validated CHANGELOG.md entry for v${version}`);
+          '
+
   publish-addon-containers:
     name: Build & Publish Add-on (${{ matrix.arch }})
     needs: [test-and-verify]

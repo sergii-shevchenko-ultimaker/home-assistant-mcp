@@ -32,30 +32,37 @@ jobs:
           const version = pkg.version;
           const cleanVer = version.replace(/^v/, "");
           
-          let notes = "";
           const changelogPath = "ha-mcp-helper/CHANGELOG.md";
-          if (fs.existsSync(changelogPath)) {
-            const lines = fs.readFileSync(changelogPath, "utf8").split(/\r?\n/);
-            const result = [];
-            let recording = false;
-            for (const line of lines) {
-              const headerMatch = line.match(/^##\s+v?(\d+\.\d+\.\d+.*)$/);
-              if (headerMatch) {
-                if (headerMatch[1] === cleanVer) {
-                  recording = true;
-                  continue;
-                } else if (recording) {
-                  break;
-                }
-              } else if (recording) {
-                result.push(line);
-              }
-            }
-            notes = result.join("\n").trim();
+          if (!fs.existsSync(changelogPath)) {
+            console.error("❌ ERROR: ha-mcp-helper/CHANGELOG.md does not exist!");
+            process.exit(1);
           }
           
-          const releaseBody = notes || "- Routine maintenance and updates.";
-          fs.writeFileSync("release_notes.md", `## What'\''s Changed in v${cleanVer}\n\n${releaseBody}\n`);
+          const lines = fs.readFileSync(changelogPath, "utf8").split(/\r?\n/);
+          const result = [];
+          let recording = false;
+          for (const line of lines) {
+            const headerMatch = line.match(/^##\s+v?(\d+\.\d+\.\d+.*)$/);
+            if (headerMatch) {
+              if (headerMatch[1] === cleanVer) {
+                recording = true;
+                continue;
+              } else if (recording) {
+                break;
+              }
+            } else if (recording) {
+              result.push(line);
+            }
+          }
+          
+          const notes = result.join("\n").trim();
+          if (!notes) {
+            console.error(`❌ ERROR: No changelog section found for version "${cleanVer}" in ha-mcp-helper/CHANGELOG.md!`);
+            console.error(`Please add "## ${cleanVer}" with release notes to ha-mcp-helper/CHANGELOG.md before drafting.`);
+            process.exit(1);
+          }
+          
+          fs.writeFileSync("release_notes.md", `## What'\''s Changed in v${cleanVer}\n\n${notes}\n`);
           
           fs.appendFileSync(process.env.GITHUB_OUTPUT, `tag=v${cleanVer}\n`);
           fs.appendFileSync(process.env.GITHUB_OUTPUT, `title=v${cleanVer}\n`);
