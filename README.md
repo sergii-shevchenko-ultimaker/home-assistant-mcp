@@ -91,7 +91,7 @@ npm run build
 npm --prefix mcp-server test
 
 # Run Python Addon test suite (security, snapshots, API endpoints)
-uv run --project addon pytest addon/tests/
+uv run --directory ha-mcp-helper pytest tests/
 ```
 
 ---

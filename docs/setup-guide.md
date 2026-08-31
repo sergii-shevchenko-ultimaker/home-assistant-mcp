@@ -17,28 +17,43 @@ Before getting started, make sure you have:
 
 The custom add-on provides the lightweight, paranoid-secure REST companion daemon (< 35MB RAM, ~0% idle CPU) running directly inside HAOS.
 
-### Step 2.1: Copy Add-on to Home Assistant
+### Step 2.1: Add Add-on Repository to Home Assistant
 
-You can install the add-on locally via the Samba Share or SSH add-on:
+#### Method A: Via Add-on Store Repository (Recommended)
+1. Open your Home Assistant Web UI.
+2. Navigate to **Settings** -> **Add-ons** -> **Add-on Store**.
+3. Click the three dots (top-right menu) and select **Repositories**.
+4. Add your GitHub repository URL: `https://github.com/sergii-shevchenko-ultimaker/home-assistant-mcp`.
+5. Click **Add** and then close the dialog.
+6. Click **Check for updates**; **Home Assistant AI Helper** will appear in the Add-on Store under your custom repository.
 
+#### Method B: Manual Copy via Samba or SSH
 1. Connect to your Home Assistant instance via Samba Share or SSH/SCP.
 2. Navigate to the `/addons` directory on your Home Assistant host.
-3. Copy the `addon/` folder from this repository into `/addons/ha_ai_helper`:
+3. Copy the `ha-mcp-helper/` folder from this repository into `/addons/ha_mcp_helper`:
    ```bash
    # Example via SCP
-   scp -r addon/ root@homeassistant.local:/addons/ha_ai_helper
+   scp -r ha-mcp-helper/ root@homeassistant.local:/addons/ha_mcp_helper
    ```
 4. Verify the folder structure on Home Assistant:
    ```
-   /addons/ha_ai_helper/
+   /addons/ha_mcp_helper/
    ├── Dockerfile
+   ├── README.md
    ├── config.yaml
    ├── run.sh
    └── app/
-       ├── __init__.py
-       ├── main.py
-       ├── security.py
-       └── snapshots.py
+       ├── core/
+       │   ├── config.py
+       │   └── security.py
+       ├── services/
+       │   ├── file_service.py
+       │   ├── snapshot_service.py
+       │   └── log_service.py
+       ├── api/
+       │   ├── schemas.py
+       │   └── routes/
+       └── main.py
    ```
 
 ### Step 2.2: Install and Start the Add-on
@@ -237,5 +252,5 @@ curl -X GET http://192.168.1.100:8123/api/ \
 npm --prefix mcp-server test
 
 # Run Python Add-on security test suite
-uv run --project addon pytest addon/tests/
+uv run --directory apps/ha-mcp-helper pytest tests/
 ```

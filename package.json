@@ -11,13 +11,22 @@
     "test": "npm run --prefix mcp-server test",
     "lint": "npm run --prefix mcp-server lint",
     "test:mcp": "npm run --prefix mcp-server test",
-    "test:addon": "uv run --project addon pytest addon/tests"
+    "test:addon": "uv run --directory ha-mcp-helper --extra dev pytest tests"
   },
   "keywords": [
     "home-assistant",
+    "homeassistant",
+    "home-assistant-addon",
     "mcp",
     "model-context-protocol",
-    "ai"
+    "ai-agents",
+    "claude-desktop",
+    "antigravity",
+    "lovelace",
+    "dashboard-design",
+    "automation",
+    "visual-feedback",
+    "playwright"
   ],
   "author": "",
   "license": "Apache-2.0"
