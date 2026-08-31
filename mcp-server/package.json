@@ -5,7 +5,8 @@
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "ha-ai-mcp": "./dist/index.js"
+    "ha-ai-mcp": "./dist/index.js",
+    "ha-ai-mcp-server": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc",

@@ -127,24 +127,23 @@ The MCP Server is configured using standard environment variables:
 
 ---
 
-## 6. Configuring AI Agent Environments
+### 6.1 Claude Desktop, Cursor, & Antigravity (Recommended: `npx`)
 
-### 6.1 Antigravity & Gemini CLI
-
-In your Antigravity or Gemini CLI settings (`~/.gemini/antigravity/mcp_config.json` or `.gemini/settings.json`), add the `ha-ai` server:
+No repository cloning or building required! Configure your MCP client (`claude_desktop_config.json`, `.cursor/mcp.json`, or Antigravity `mcp_config.json`):
 
 ```json
 {
   "mcpServers": {
     "ha-ai": {
-      "command": "node",
+      "command": "npx",
       "args": [
-        "/absolute/path/to/ha-ai/mcp-server/dist/index.js"
+        "-y",
+        "ha-ai-mcp-server"
       ],
       "env": {
-        "HA_URL": "http://192.168.1.100:8123",
+        "HA_URL": "http://<YOUR_HA_IP>:8123",
         "HA_TOKEN": "your-long-lived-access-token",
-        "ADDON_URL": "http://192.168.1.100:8099",
+        "ADDON_URL": "http://<YOUR_HA_IP>:8099",
         "ADDON_KEY": "your-addon-api-key"
       }
     }
@@ -152,36 +151,9 @@ In your Antigravity or Gemini CLI settings (`~/.gemini/antigravity/mcp_config.js
 }
 ```
 
-### 6.2 Claude Desktop
+### 6.2 Local Development / Source Build
 
-Add the server definition to your `claude_desktop_config.json`:
-
-- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
-- **Linux**: `~/.config/Claude/claude_desktop_config.json`
-
-```json
-{
-  "mcpServers": {
-    "home-assistant": {
-      "command": "node",
-      "args": [
-        "/absolute/path/to/ha-ai/mcp-server/dist/index.js"
-      ],
-      "env": {
-        "HA_URL": "http://homeassistant.local:8123",
-        "HA_TOKEN": "your-long-lived-access-token",
-        "ADDON_URL": "http://homeassistant.local:8099",
-        "ADDON_KEY": "your-addon-api-key"
-      }
-    }
-  }
-}
-```
-
-### 6.3 OpenCode / Cursor / VS Code
-
-In OpenCode or Cursor (`.cursor/mcp.json` or project settings):
+If developing locally on the repository code:
 
 ```json
 {
@@ -189,12 +161,12 @@ In OpenCode or Cursor (`.cursor/mcp.json` or project settings):
     "ha-ai": {
       "command": "node",
       "args": [
-        "c:/code/ha-ai/mcp-server/dist/index.js"
+        "/path/to/home-assistant-mcp/mcp-server/dist/index.js"
       ],
       "env": {
-        "HA_URL": "http://192.168.1.100:8123",
+        "HA_URL": "http://<YOUR_HA_IP>:8123",
         "HA_TOKEN": "your-long-lived-access-token",
-        "ADDON_URL": "http://192.168.1.100:8099",
+        "ADDON_URL": "http://<YOUR_HA_IP>:8099",
         "ADDON_KEY": "your-addon-api-key"
       }
     }
@@ -206,11 +178,12 @@ In OpenCode or Cursor (`.cursor/mcp.json` or project settings):
 
 ## 7. AI Skills Installation
 
-To equip your AI agent with specialized domain knowledge for Home Assistant, copy or link the skill packages from `skills/` into your agent's skills directory (e.g. `~/.gemini/config/skills/` or your workspace skills directory):
+To equip your AI agent with specialized domain knowledge for Home Assistant, copy or link the skill packages from `skills/` into your agent's skills directory (e.g. `~/.gemini/config/skills/`, `.cursor/rules/`, or your workspace skills directory):
 
-1. **`ha-dashboard-designer`**: SOP for querying entities, drafting Lovelace YAML, capturing headless Playwright screenshots, and visual feedback refinement.
-2. **`ha-automation-builder`**: SOP for drafting robust automations, syntax checking, safe saving with auto-reload, and live trigger testing.
-3. **`ha-troubleshooter`**: SOP for inspecting sanitized error logs, diagnosing entity faults, and executing instantaneous snapshot rollbacks.
+1. **`ha-device-controller`**: SOP for querying live entity states, invoking domain services (`light`, `switch`, `climate`, `media_player`, `cover`), and validating state transitions.
+2. **`ha-dashboard-designer`**: SOP for querying entities, drafting Lovelace YAML, capturing headless Playwright screenshots, and visual feedback refinement.
+3. **`ha-automation-builder`**: SOP for drafting robust automations, syntax checking, safe saving with auto-reload, and live trigger testing.
+4. **`ha-troubleshooter`**: SOP for inspecting sanitized error logs, diagnosing entity faults, and executing instantaneous snapshot rollbacks.
 
 ---
 

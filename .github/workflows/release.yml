@@ -146,12 +146,24 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
+          registry-url: 'https://registry.npmjs.org'
           cache: 'npm'
 
       - name: Install Dependencies & Build
         run: |
           npm ci
           npm run build
+
+      - name: Publish to NPM Registry
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -n "${NODE_AUTH_TOKEN}" ]; then
+            echo "Publishing ha-ai-mcp-server to npm..."
+            npm --prefix mcp-server publish --access public || true
+          else
+            echo "No NPM_TOKEN provided; skipping npm publish."
+          fi
 
       - name: Package Standalone MCP Archive
         run: |
