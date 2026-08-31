@@ -1,27 +1,22 @@
-name: Release Drafter
+name: Draft Release
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    types:
-      - opened
-      - reopened
-      - synchronize
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  update_release_draft:
-    permissions:
-      contents: write
-      pull-requests: write
+  draft_release:
+    name: Draft Release Notes
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -32,16 +27,29 @@ jobs:
         id: pkg_version
         run: |
           VERSION=$(node -e "console.log(JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version)")
-          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "tag=v${VERSION}" >> "$GITHUB_OUTPUT"
-          echo "Extracted project version: v${VERSION}"
+          echo "title=v${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Release Tag: v${VERSION}"
 
-      - name: Draft Release
-        uses: release-drafter/release-drafter@v6
-        with:
-          config-name: release-drafter.yml
-          tag: ${{ steps.pkg_version.outputs.tag }}
-          name: ${{ steps.pkg_version.outputs.tag }}
-          version: ${{ steps.pkg_version.outputs.version }}
+      - name: Create or Update Draft Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.pkg_version.outputs.tag }}
+          TITLE: ${{ steps.pkg_version.outputs.title }}
+        run: |
+          # Query existing draft release ID if one exists
+          DRAFT_ID=$(gh api repos/${{ github.repository }}/releases --jq ".[] | select(.draft == true) | .id" | head -n 1)
+
+          if [ -n "$DRAFT_ID" ]; then
+            echo "Updating existing draft release (ID: $DRAFT_ID) to $TAG..."
+            gh api --method PATCH "repos/${{ github.repository }}/releases/$DRAFT_ID" \
+              -f tag_name="$TAG" \
+              -f name="$TITLE" \
+              -F generate_release_notes=true
+          else
+            echo "Creating new release draft for $TAG with automatic notes..."
+            gh release create "$TAG" \
+              --title "$TITLE" \
+              --draft \
+              --generate-notes
+          fi
