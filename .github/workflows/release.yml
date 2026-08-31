@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: 'Release Tag Name (e.g. v0.2.1)'
-        required: true
-        default: 'v0.2.1'
+        description: 'Release Tag Name (e.g. v0.3.0)'
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -68,22 +68,28 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Extract Clean Version
-        id: version_info
+      - name: Set Image Name & Version
+        id: image_info
         run: |
           RAW_TAG="${{ github.event.release.tag_name || github.event.inputs.tag_name }}"
+          if [ -z "$RAW_TAG" ]; then
+            RAW_TAG=$(node -e "console.log(JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version)")
+          fi
           CLEAN_VERSION="${RAW_TAG#v}"
+          OWNER_LOWER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
           echo "version=${CLEAN_VERSION}" >> "$GITHUB_OUTPUT"
-          echo "Cleaned version: ${CLEAN_VERSION}"
+          echo "owner=${OWNER_LOWER}" >> "$GITHUB_OUTPUT"
+          echo "Resolved Add-on Version: ${CLEAN_VERSION} for owner: ${OWNER_LOWER}"
 
       - name: Build and Publish Add-on Image
         uses: home-assistant/builder/actions/build-image@master
         with:
           arch: ${{ matrix.arch }}
           context: ha-mcp-helper
-          image: ghcr.io/${{ github.repository_owner }}/ha-mcp-helper-${{ matrix.arch }}
+          image: ghcr.io/${{ steps.image_info.outputs.owner }}/ha-mcp-helper-${{ matrix.arch }}
           image-tags: |
-            ${{ steps.version_info.outputs.version }}
+            ${{ steps.image_info.outputs.version }}
+            v${{ steps.image_info.outputs.version }}
             latest
           container-registry: ghcr.io
           container-registry-username: ${{ github.actor }}
@@ -92,7 +98,7 @@ jobs:
           build-args: |
             BUILD_FROM=python:3.11-alpine
             BUILD_ARCH=${{ matrix.arch }}
-            BUILD_VERSION=${{ steps.version_info.outputs.version }}
+            BUILD_VERSION=${{ steps.image_info.outputs.version }}
 
   publish-mcp-package:
     name: Build & Attach Standalone MCP Archive
@@ -115,16 +121,26 @@ jobs:
 
       - name: Package Standalone MCP Archive
         run: |
-          TAG="${{ github.event.release.tag_name || github.event.inputs.tag_name }}"
+          RAW_TAG="${{ github.event.release.tag_name || github.event.inputs.tag_name }}"
+          if [ -z "$RAW_TAG" ]; then
+            RAW_TAG=$(node -e "console.log(JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version)")
+          fi
+          CLEAN_VERSION="${RAW_TAG#v}"
+          TAG="v${CLEAN_VERSION}"
           ARCHIVE_NAME="ha-ai-mcp-server-${TAG}.tar.gz"
           tar -czf "${ARCHIVE_NAME}" -C mcp-server package.json dist
 
       - name: Attach Archive to GitHub Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ github.event.release.tag_name || github.event.inputs.tag_name }}
         run: |
+          RAW_TAG="${{ github.event.release.tag_name || github.event.inputs.tag_name }}"
+          if [ -z "$RAW_TAG" ]; then
+            RAW_TAG=$(node -e "console.log(JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version)")
+          fi
+          CLEAN_VERSION="${RAW_TAG#v}"
+          TAG="v${CLEAN_VERSION}"
           ARCHIVE_NAME="ha-ai-mcp-server-${TAG}.tar.gz"
           if [ -f "${ARCHIVE_NAME}" ]; then
-            gh release upload "${TAG}" "${ARCHIVE_NAME}" --clobber
+            gh release upload "${TAG}" "${ARCHIVE_NAME}" --clobber || true
           fi
