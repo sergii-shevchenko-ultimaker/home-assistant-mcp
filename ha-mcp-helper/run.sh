@@ -1,4 +1,5 @@
-#!/usr/bin/with-contenv bashio
+#!/bin/sh
+set -e
 
 OPTIONS_FILE="/data/options.json"
 
