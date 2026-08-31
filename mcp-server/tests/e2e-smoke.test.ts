@@ -609,11 +609,12 @@ views:
       "ha_system_get_logs",
       "ha_system_create_backup",
       "ha_system_restore_backup",
+      "ha_system_call_service",
     ];
 
     for (const toolName of expectedToolNames) {
       expect(registeredTools[toolName], `McpServer should register tool ${toolName}`).toBeDefined();
     }
-    expect(Object.keys(registeredTools).length).toBe(12);
+    expect(Object.keys(registeredTools).length).toBe(13);
   });
 });

@@ -516,6 +516,7 @@ describe("MCP Tools Suite", () => {
       expect(registeredTools["ha_system_get_logs"]).toBeDefined();
       expect(registeredTools["ha_system_create_backup"]).toBeDefined();
       expect(registeredTools["ha_system_restore_backup"]).toBeDefined();
+      expect(registeredTools["ha_system_call_service"]).toBeDefined();
     });
 
     it("createServer factory should initialize server and clients properly", () => {
@@ -523,7 +524,7 @@ describe("MCP Tools Suite", () => {
       expect(server).toBeDefined();
       expect(clients).toBe(mockClients);
       const registeredTools = (server as any)._registeredTools;
-      expect(Object.keys(registeredTools).length).toBe(12);
+      expect(Object.keys(registeredTools).length).toBe(13);
     });
   });
 });

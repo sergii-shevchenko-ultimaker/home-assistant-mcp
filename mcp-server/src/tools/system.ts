@@ -35,6 +35,19 @@ export const restoreBackupSchema = {
     .describe("Snapshot ID to restore (e.g. 'snap_20260831_120000_configuration_yaml')"),
 };
 
+export const callServiceSchema = {
+  domain: z
+    .string()
+    .describe("Service domain (e.g. 'light', 'switch', 'automation', 'climate', 'homeassistant')"),
+  service: z
+    .string()
+    .describe("Service name to invoke (e.g. 'turn_on', 'turn_off', 'toggle', 'reload', 'trigger')"),
+  service_data: z
+    .record(z.any())
+    .optional()
+    .describe("Service payload parameters (e.g. { entity_id: 'light.office_light' })"),
+};
+
 export async function handleSystemHealth(clients: ToolClients): Promise<McpToolResult> {
   try {
     const [haApi, addonHealth] = await Promise.allSettled([
@@ -230,6 +243,33 @@ export async function handleSystemRestoreBackup(
   }
 }
 
+export async function handleSystemCallService(
+  clients: ToolClients,
+  args: { domain: string; service: string; service_data?: Record<string, any> }
+): Promise<McpToolResult> {
+  try {
+    const res = await clients.restClient.callService(args.domain, args.service, args.service_data);
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Service ${args.domain}.${args.service} executed successfully.${res ? " Response: " + JSON.stringify(res) : ""}`,
+        },
+      ],
+    };
+  } catch (error: any) {
+    return {
+      isError: true,
+      content: [
+        {
+          type: "text",
+          text: `Failed to call service ${args.domain}.${args.service}: ${error.message || String(error)}`,
+        },
+      ],
+    };
+  }
+}
+
 export function registerSystemTools(server: McpServer, clients: ToolClients): void {
   server.registerTool(
     "ha_system_health",
@@ -246,6 +286,15 @@ export function registerSystemTools(server: McpServer, clients: ToolClients): vo
       inputSchema: listEntitiesSchema,
     },
     async (args) => handleSystemListEntities(clients, args)
+  );
+
+  server.registerTool(
+    "ha_system_call_service",
+    {
+      description: "Call any Home Assistant service (e.g. 'light.turn_on', 'switch.toggle', 'climate.set_temperature').",
+      inputSchema: callServiceSchema,
+    },
+    async (args) => handleSystemCallService(clients, args)
   );
 
   server.registerTool(
