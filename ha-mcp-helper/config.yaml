@@ -4,11 +4,9 @@ description: "Lightweight and secure AI agent companion for Home Assistant"
 version: "0.1.1"
 image: "ghcr.io/sergii-shevchenko-ultimaker/ha-mcp-helper-{arch}"
 arch:
-  - "armhf"
   - "armv7"
   - "aarch64"
   - "amd64"
-  - "i386"
 init: false
 map:
   - "config:rw"
