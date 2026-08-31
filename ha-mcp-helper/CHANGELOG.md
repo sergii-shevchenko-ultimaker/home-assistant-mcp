@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.7
+- Update maintainer email in repository metadata
+- Add emojis to 0.3.6 changelog entries
+- Update repo and image URLs to new GitHub owner
+
 ## 0.3.6
 - 👤 Update repo and image URLs to new GitHub owner
 - ⚙️ ci: strictly fail release and drafting workflows if CHANGELOG.md entry is missing
