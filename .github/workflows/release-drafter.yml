@@ -23,19 +23,51 @@ jobs:
         with:
           node-version: 24
 
-      - name: Extract Version from package.json
-        id: pkg_version
+      - name: Extract Version & Changelog Notes
+        id: release_data
         run: |
-          VERSION=$(node -e "console.log(JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version)")
-          echo "tag=v${VERSION}" >> "$GITHUB_OUTPUT"
-          echo "title=v${VERSION}" >> "$GITHUB_OUTPUT"
-          echo "Release Tag: v${VERSION}"
+          node -e '
+          const fs = require("fs");
+          const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
+          const version = pkg.version;
+          const cleanVer = version.replace(/^v/, "");
+          
+          let notes = "";
+          const changelogPath = "ha-mcp-helper/CHANGELOG.md";
+          if (fs.existsSync(changelogPath)) {
+            const lines = fs.readFileSync(changelogPath, "utf8").split(/\r?\n/);
+            const result = [];
+            let recording = false;
+            for (const line of lines) {
+              const headerMatch = line.match(/^##\s+v?(\d+\.\d+\.\d+.*)$/);
+              if (headerMatch) {
+                if (headerMatch[1] === cleanVer) {
+                  recording = true;
+                  continue;
+                } else if (recording) {
+                  break;
+                }
+              } else if (recording) {
+                result.push(line);
+              }
+            }
+            notes = result.join("\n").trim();
+          }
+          
+          const releaseBody = notes || "- Routine maintenance and updates.";
+          fs.writeFileSync("release_notes.md", `## What'\''s Changed in v${cleanVer}\n\n${releaseBody}\n`);
+          
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `tag=v${cleanVer}\n`);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `title=v${cleanVer}\n`);
+          '
+          echo "Drafting release for ${{ steps.release_data.outputs.tag }}"
+          cat release_notes.md
 
       - name: Create or Update Draft Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ steps.pkg_version.outputs.tag }}
-          TITLE: ${{ steps.pkg_version.outputs.title }}
+          TAG: ${{ steps.release_data.outputs.tag }}
+          TITLE: ${{ steps.release_data.outputs.title }}
         run: |
           # Query existing draft release ID if one exists
           DRAFT_ID=$(gh api repos/${{ github.repository }}/releases --jq ".[] | select(.draft == true) | .id" | head -n 1)
@@ -45,11 +77,11 @@ jobs:
             gh api --method PATCH "repos/${{ github.repository }}/releases/$DRAFT_ID" \
               -f tag_name="$TAG" \
               -f name="$TITLE" \
-              -F generate_release_notes=true
+              -F body=@release_notes.md
           else
-            echo "Creating new release draft for $TAG with automatic notes..."
+            echo "Creating new release draft for $TAG with changelog notes..."
             gh release create "$TAG" \
               --title "$TITLE" \
               --draft \
-              --generate-notes
+              --notes-file release_notes.md
           fi
