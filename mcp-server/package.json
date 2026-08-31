@@ -4,6 +4,9 @@
   "description": "Model Context Protocol server for Home Assistant with Playwright visual feedback",
   "type": "module",
   "main": "dist/index.js",
+  "bin": {
+    "ha-ai-mcp": "./dist/index.js"
+  },
   "scripts": {
     "build": "tsc",
     "test": "vitest run",
