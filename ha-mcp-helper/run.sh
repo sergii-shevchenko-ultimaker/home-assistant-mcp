@@ -15,7 +15,11 @@ if [ -z "$ADDON_API_KEY" ]; then
     echo "[WARNING] Please configure an api_key in the add-on configuration."
 fi
 
-export CONFIG_ROOT="${CONFIG_ROOT:-/config}"
+if [ -d "/homeassistant_config" ]; then
+    export CONFIG_ROOT="/homeassistant_config"
+else
+    export CONFIG_ROOT="${CONFIG_ROOT:-/config}"
+fi
 
 echo "[INFO] Starting Home Assistant AI Helper Addon..."
 echo "[INFO] Config Root: ${CONFIG_ROOT}"
