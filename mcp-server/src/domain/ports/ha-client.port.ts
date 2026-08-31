@@ -4,6 +4,7 @@ export interface IHARestClient {
   checkApi(): Promise<{ message: string }>;
   getStates(): Promise<HAEntityState[]>;
   callService(domain: string, service: string, serviceData?: Record<string, any>): Promise<any>;
+  getSupervisorLogs(linesCount?: number): Promise<string[]>;
 }
 
 export interface IHAWsClient {

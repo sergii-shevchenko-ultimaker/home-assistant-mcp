@@ -21,6 +21,11 @@ export const getLogsSchema = {
     .optional()
     .default(100)
     .describe("Number of log lines to retrieve from Home Assistant log (default: 100)"),
+  source: z
+    .enum(["core", "supervisor", "all"])
+    .optional()
+    .default("all")
+    .describe("Log source to query ('core' for HA Core events, 'supervisor' for Docker/Add-on lifecycle, 'all' for combined)"),
 };
 
 export const createBackupSchema = {
@@ -149,17 +154,54 @@ export async function handleSystemListEntities(
 
 export async function handleSystemGetLogs(
   clients: ToolClients,
-  args: { lines_count?: number }
+  args: { lines_count?: number; source?: "core" | "supervisor" | "all" }
 ): Promise<McpToolResult> {
   try {
     const linesCount = args.lines_count ?? 100;
-    const logs = await clients.addonClient.getLogs(linesCount);
+    const source = args.source ?? "all";
+
+    const logSections: string[] = [];
+    const errors: string[] = [];
+
+    if (source === "core" || source === "all") {
+      try {
+        const coreLogs = await clients.addonClient.getLogs(linesCount);
+        if (coreLogs.lines.length > 0) {
+          logSections.push(`=== Home Assistant Core Logs ===\n${coreLogs.lines.join("\n")}`);
+        }
+      } catch (err: any) {
+        errors.push(`Core logs error: ${err.message}`);
+      }
+    }
+
+    if (source === "supervisor" || source === "all") {
+      try {
+        const supLogs = await clients.restClient.getSupervisorLogs(linesCount);
+        if (supLogs.length > 0) {
+          logSections.push(`=== Home Assistant Supervisor Logs ===\n${supLogs.join("\n")}`);
+        }
+      } catch (err: any) {
+        errors.push(`Supervisor logs error: ${err.message}`);
+      }
+    }
+
+    if (logSections.length === 0 && errors.length > 0) {
+      return {
+        isError: true,
+        content: [
+          {
+            type: "text",
+            text: `Failed to retrieve logs: ${errors.join(", ")}`,
+          },
+        ],
+      };
+    }
 
     return {
       content: [
         {
           type: "text",
-          text: logs.lines.join("\n") || "(No log output available)",
+          text: logSections.join("\n\n") || "(No log output available from requested sources)",
         },
       ],
     };

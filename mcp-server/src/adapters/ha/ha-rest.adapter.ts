@@ -64,6 +64,18 @@ export class HARestAdapter implements IHARestClient {
       throw new ClientError(`Failed calling service ${domain}.${service}: ${err.message}`, err.response?.status);
     }
   }
+
+  async getSupervisorLogs(linesCount = 100): Promise<string[]> {
+    try {
+      const resp = await this.client.get<string>("/api/hassio/supervisor/logs", {
+        responseType: "text",
+      });
+      const lines = String(resp.data).split("\n").filter(Boolean);
+      return lines.slice(-linesCount);
+    } catch {
+      return [];
+    }
+  }
 }
 
 // Backward-compatible alias
