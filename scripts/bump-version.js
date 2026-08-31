@@ -2,13 +2,17 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { execSync } from 'child_process';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '..');
 
-const arg = process.argv[2];
-if (!arg) {
-  console.error('Usage: node scripts/bump-version.js <new-version | patch | minor | major>');
+const args = process.argv.slice(2);
+const versionArg = args.find(a => !a.startsWith('--'));
+const noGit = args.includes('--no-git');
+
+if (!versionArg) {
+  console.error('Usage: npm run version:bump <new-version | patch | minor | major> [--no-git]');
   process.exit(1);
 }
 
@@ -39,9 +43,9 @@ function calculateNextVersion(currentVersion, bumpType) {
 const rootPkgPath = path.join(rootDir, 'package.json');
 const rootPkg = JSON.parse(fs.readFileSync(rootPkgPath, 'utf8'));
 const currentVersion = rootPkg.version;
-const newVersion = calculateNextVersion(currentVersion, arg);
+const newVersion = calculateNextVersion(currentVersion, versionArg);
 
-console.log(`Bumping project version: ${currentVersion} -> ${newVersion}`);
+console.log(`\n🚀 Bumping project version: ${currentVersion} -> ${newVersion}\n`);
 
 // 1. package.json
 rootPkg.version = newVersion;
@@ -102,4 +106,19 @@ if (fs.existsSync(testApiPath)) {
   console.log('✓ Updated ha-mcp-helper/tests/test_api.py');
 }
 
-console.log(`\nSuccessfully bumped all files to v${newVersion}!`);
+console.log(`\n✨ Successfully bumped all manifests & code to v${newVersion}!`);
+
+// Optional Git commit & tag
+if (!noGit) {
+  try {
+    const tagName = `v${newVersion}`;
+    console.log('\n📦 Staging changes, creating git commit and tag...');
+    execSync('git add package.json mcp-server/package.json ha-mcp-helper/', { cwd: rootDir, stdio: 'inherit' });
+    execSync(`git commit -m "chore(release): bump version to ${tagName}"`, { cwd: rootDir, stdio: 'inherit' });
+    execSync(`git tag -a "${tagName}" -m "Release ${tagName}"`, { cwd: rootDir, stdio: 'inherit' });
+    console.log(`\n🎉 Created git commit and tag "${tagName}"!`);
+    console.log(`\nTo publish the release, run:\n  git push origin main --tags\n`);
+  } catch (error) {
+    console.warn('⚠️  Could not automatically create git commit/tag:', error.message);
+  }
+}
