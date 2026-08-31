@@ -2,6 +2,7 @@
   "name": "ha-ai",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "description": "Lightweight, paranoid-secure Home Assistant AI MCP Server and Addon",
   "workspaces": [
     "mcp-server"
@@ -11,7 +12,10 @@
     "test": "npm run --prefix mcp-server test",
     "lint": "npm run --prefix mcp-server lint",
     "test:mcp": "npm run --prefix mcp-server test",
-    "test:addon": "uv run --directory ha-mcp-helper --extra dev pytest tests"
+    "test:addon": "uv run --directory ha-mcp-helper --extra dev pytest tests",
+    "dev:addon": "uv run --directory ha-mcp-helper uvicorn app.main:app --host 0.0.0.0 --port 8099 --reload",
+    "dev:mcp": "npm run --prefix mcp-server build -- --watch",
+    "version:bump": "node scripts/bump-version.js"
   },
   "keywords": [
     "home-assistant",
