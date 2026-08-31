@@ -2,6 +2,8 @@
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { fileURLToPath } from "url";
+import path from "path";
 
 import { loadConfig } from "./core/config.js";
 import { defaultLogger } from "./core/logger.js";
@@ -77,7 +79,23 @@ async function main(): Promise<void> {
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith("dist/index.js")) {
+const isDirectEntrypoint = (): boolean => {
+  if (!process.argv[1]) return false;
+  try {
+    const currentFilePath = fileURLToPath(import.meta.url).toLowerCase();
+    const executedScriptPath = path.resolve(process.argv[1]).toLowerCase();
+    const normalizedArg = process.argv[1].replace(/\\/g, "/").toLowerCase();
+    return (
+      currentFilePath === executedScriptPath ||
+      normalizedArg.endsWith("dist/index.js") ||
+      normalizedArg.endsWith("src/index.ts")
+    );
+  } catch {
+    return false;
+  }
+};
+
+if (isDirectEntrypoint()) {
   main().catch((err) => {
     defaultLogger.error("Unhandled top-level error:", err);
     process.exit(1);
