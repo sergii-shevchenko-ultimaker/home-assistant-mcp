@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: 'Release Tag Name (e.g. v1.0.0)'
+        description: 'Release Tag Name (e.g. v0.1.1)'
         required: true
-        default: 'v1.0.0'
+        default: 'v0.1.1'
 
 permissions:
   contents: write
@@ -52,9 +52,12 @@ jobs:
         run: uv run --directory ha-mcp-helper --extra dev pytest tests
 
   publish-addon-containers:
-    name: Build & Publish Multi-Arch Add-on Images
+    name: Build & Publish Add-on (${{ matrix.arch }})
     needs: [test-and-verify]
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [aarch64, amd64, armv7, armhf, i386]
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -72,11 +75,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and Publish Add-on Images to GHCR
+      - name: Build and Publish Add-on Image to GHCR
         uses: home-assistant/builder@master
         with:
           args: |
-            --all \
+            --${{ matrix.arch }} \
             --target ha-mcp-helper \
             --image "ha-mcp-helper-{arch}" \
             --docker-hub "ghcr.io/${{ github.repository_owner }}" \
