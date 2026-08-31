@@ -23,6 +23,8 @@ htmlcov/
 .env.*
 *.bak
 secrets.yaml
+.npmrc
+**/.npmrc
 
 # IDE and OS
 .DS_Store
