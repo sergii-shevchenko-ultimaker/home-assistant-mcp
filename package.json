@@ -1,0 +1,24 @@
+{
+  "name": "ha-ai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Lightweight, paranoid-secure Home Assistant AI MCP Server and Addon",
+  "workspaces": [
+    "mcp-server"
+  ],
+  "scripts": {
+    "build": "npm run --prefix mcp-server build",
+    "test": "npm run --prefix mcp-server test",
+    "lint": "npm run --prefix mcp-server lint",
+    "test:mcp": "npm run --prefix mcp-server test",
+    "test:addon": "pytest addon/tests"
+  },
+  "keywords": [
+    "home-assistant",
+    "mcp",
+    "model-context-protocol",
+    "ai"
+  ],
+  "author": "",
+  "license": "Apache-2.0"
+}

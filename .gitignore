@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+.venv/
+env/
+venv/
+
+# Build and Distribution outputs
+dist/
+build/
+*.egg-info/
+
+# Python caching & bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environment and Secret files
+.env
+.env.*
+*.bak
+secrets.yaml
+
+# IDE and OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Superpowers and Temp files
+.superpowers
+*.log
