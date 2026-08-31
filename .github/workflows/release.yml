@@ -40,6 +40,9 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Install Playwright Chromium
+        run: npx --prefix mcp-server playwright install --with-deps chromium
+
       - name: Type Check & Test MCP Server
         run: |
           npm run --prefix mcp-server lint
