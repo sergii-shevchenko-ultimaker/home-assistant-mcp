@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.4
+- feat: automate CHANGELOG.md updates during version bumping
+- Merge branch 'main' of github.com:sergii-shevchenko-ultimaker/home-assistant-mcp
+- ci(release): add required push: true and version parameters to build-image action
+
 ## 0.3.3
 - 🚀 Fix container publishing to GHCR in Home Assistant build action (`push: true`).
 

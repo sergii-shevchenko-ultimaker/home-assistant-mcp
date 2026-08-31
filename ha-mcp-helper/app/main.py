@@ -21,7 +21,7 @@ def create_app() -> FastAPI:
     application = FastAPI(
         title="Home Assistant AI Helper Addon",
         description="Lightweight and secure AI agent companion for Home Assistant",
-        version="0.3.3",
+        version="0.3.4",
     )
     application.include_router(api_v1)
     return application
