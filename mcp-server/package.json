@@ -1,6 +1,6 @@
 {
   "name": "ha-ai-mcp-server",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Model Context Protocol server for Home Assistant with Playwright visual feedback",
   "type": "module",
   "main": "dist/index.js",
