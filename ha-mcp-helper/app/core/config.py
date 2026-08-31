@@ -9,6 +9,9 @@ from .security import verify_api_key
 
 def get_config_root() -> str:
     """Return the Home Assistant configuration directory path."""
+    for candidate in ["/homeassistant", "/homeassistant_config", "/config"]:
+        if os.path.isdir(candidate):
+            return candidate
     return os.environ.get("CONFIG_ROOT", "/config")
 
 

@@ -15,7 +15,9 @@ if [ -z "$ADDON_API_KEY" ]; then
     echo "[WARNING] Please configure an api_key in the add-on configuration."
 fi
 
-if [ -d "/homeassistant_config" ]; then
+if [ -d "/homeassistant" ]; then
+    export CONFIG_ROOT="/homeassistant"
+elif [ -d "/homeassistant_config" ]; then
     export CONFIG_ROOT="/homeassistant_config"
 else
     export CONFIG_ROOT="${CONFIG_ROOT:-/config}"

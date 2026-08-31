@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.5
+- fix(addon): set multi-arch python:3.11-alpine as default base image
+- ci(release): add QEMU multi-arch platform compilation (linux/arm64 & linux/amd64)
+- feat: automate CHANGELOG.md updates during version bumping
+
 ## 0.3.4
 - feat: automate CHANGELOG.md updates during version bumping
 - Merge branch 'main' of github.com:sergii-shevchenko-ultimaker/home-assistant-mcp
