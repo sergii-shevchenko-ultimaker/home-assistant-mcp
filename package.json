@@ -1,6 +1,6 @@
 {
   "name": "ha-ai",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "private": true,
   "type": "module",
   "description": "Lightweight, paranoid-secure Home Assistant AI MCP Server and Addon",
