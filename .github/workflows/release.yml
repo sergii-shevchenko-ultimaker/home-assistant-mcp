@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: 'Release Tag Name (e.g. v0.1.1)'
+        description: 'Release Tag Name (e.g. v0.2.1)'
         required: true
-        default: 'v0.1.1'
+        default: 'v0.2.1'
 
 permissions:
   contents: write
@@ -26,7 +26,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: 'npm'
 
       - name: Setup Python
@@ -62,12 +62,11 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Extract Clean Version
         id: version_info
@@ -77,15 +76,23 @@ jobs:
           echo "version=${CLEAN_VERSION}" >> "$GITHUB_OUTPUT"
           echo "Cleaned version: ${CLEAN_VERSION}"
 
-      - name: Build and Publish Add-on Image to GHCR
-        uses: home-assistant/builder@master
+      - name: Build and Publish Add-on Image
+        uses: home-assistant/builder/actions/build-image@master
         with:
-          args: |
-            --${{ matrix.arch }} \
-            --target ha-mcp-helper \
-            --image "ha-mcp-helper-{arch}" \
-            --docker-hub "ghcr.io/${{ github.repository_owner }}" \
-            --version "${{ steps.version_info.outputs.version }}"
+          arch: ${{ matrix.arch }}
+          context: ha-mcp-helper
+          image: ghcr.io/${{ github.repository_owner }}/ha-mcp-helper-${{ matrix.arch }}
+          image-tags: |
+            ${{ steps.version_info.outputs.version }}
+            latest
+          container-registry: ghcr.io
+          container-registry-username: ${{ github.actor }}
+          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
+          cosign: false
+          build-args: |
+            BUILD_FROM=python:3.11-alpine
+            BUILD_ARCH=${{ matrix.arch }}
+            BUILD_VERSION=${{ steps.version_info.outputs.version }}
 
   publish-mcp-package:
     name: Build & Attach Standalone MCP Archive
@@ -98,7 +105,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: 'npm'
 
       - name: Install Dependencies & Build
