@@ -69,6 +69,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Extract Clean Version
+        id: version_info
+        run: |
+          RAW_TAG="${{ github.event.release.tag_name || github.event.inputs.tag_name }}"
+          CLEAN_VERSION="${RAW_TAG#v}"
+          echo "version=${CLEAN_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Cleaned version: ${CLEAN_VERSION}"
+
       - name: Build and Publish Add-on Image to GHCR
         uses: home-assistant/builder@master
         with:
@@ -77,7 +85,7 @@ jobs:
             --target ha-mcp-helper \
             --image "ha-mcp-helper-{arch}" \
             --docker-hub "ghcr.io/${{ github.repository_owner }}" \
-            --version "${{ github.event.release.tag_name || github.event.inputs.tag_name }}"
+            --version "${{ steps.version_info.outputs.version }}"
 
   publish-mcp-package:
     name: Build & Attach Standalone MCP Archive
