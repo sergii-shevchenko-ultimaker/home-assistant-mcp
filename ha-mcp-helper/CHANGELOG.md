@@ -7,7 +7,7 @@
 
 ## 0.3.4
 - feat: automate CHANGELOG.md updates during version bumping
-- Merge branch 'main' of github.com:sergii-shevchenko-ultimaker/home-assistant-mcp
+- Merge branch 'main' of github.com:serhii-shevchenko/home-assistant-mcp
 - ci(release): add required push: true and version parameters to build-image action
 
 ## 0.3.3

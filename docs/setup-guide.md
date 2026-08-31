@@ -23,7 +23,7 @@ The custom add-on provides the lightweight, paranoid-secure REST companion daemo
 1. Open your Home Assistant Web UI.
 2. Navigate to **Settings** -> **Add-ons** -> **Add-on Store**.
 3. Click the three dots (top-right menu) and select **Repositories**.
-4. Add your GitHub repository URL: `https://github.com/sergii-shevchenko-ultimaker/home-assistant-mcp`.
+4. Add your GitHub repository URL: `https://github.com/serhii-shevchenko/home-assistant-mcp`.
 5. Click **Add** and then close the dialog.
 6. Click **Check for updates**; **Home Assistant AI Helper** will appear in the Add-on Store under your custom repository.
 
