@@ -15,9 +15,20 @@
   },
   "keywords": [
     "home-assistant",
+    "homeassistant",
+    "hacs",
+    "hacs-repository",
+    "home-assistant-addon",
     "mcp",
     "model-context-protocol",
-    "ai"
+    "ai-agents",
+    "claude-desktop",
+    "antigravity",
+    "lovelace",
+    "dashboard-design",
+    "automation",
+    "visual-feedback",
+    "playwright"
   ],
   "author": "",
   "license": "Apache-2.0"
